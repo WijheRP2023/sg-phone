@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Videobellen</title>
+    <script src="https://cdn.jsdelivr.net/npm/simple-peer@9.11.1/simplepeer.min.js"></script>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div id="video-call">
+        <video id="localVideo" autoplay muted></video>
+        <video id="remoteVideo" autoplay></video>
+        <button id="endCall" onclick="endVideoCall()">Ophangen</button>
+    </div>
+
+    <script src="../js/video.js"></script>
+</body>
+</html>

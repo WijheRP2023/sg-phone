@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="youtube-app">
+        <input type="text" id="searchQuery" placeholder="Zoek naar video's..." />
+        <button onclick="searchYouTube()">Zoeken</button>
+
+        <div id="results"></div>
+
+        <div id="videoPlayer" style="display:none;">
+            <iframe id="youtubeFrame" width="100%" height="200" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <script>
+        function searchYouTube() {
+            let query = document.getElementById("searchQuery").value;
+            if (!query) return;
+
+            fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=5&q=${query}&key=JOUW_API_SLEUTEL_HIER`)
+                .then(response => response.json())
+                .then(data => {
+                    let resultsDiv = document.getElementById("results");
+                    resultsDiv.innerHTML = "";
+
+                    data.items.forEach(video => {
+                        let videoId = video.id.videoId;
+                        let title = video.snippet.title;
+                        let thumbnail = video.snippet.thumbnails.default.url;
+
+                        let videoElement = `<div class="video" onclick="watchVideo('${videoId}')">
+                            <img src="${thumbnail}" alt="${title}">
+                            <p>${title}</p>
+                        </div>`;
+
+                        resultsDiv.innerHTML += videoElement;
+                    });
+                });
+        }
+
+        function watchVideo(videoId) {
+            document.getElementById("videoPlayer").style.display = "block";
+            document.getElementById("youtubeFrame").src = `https://www.youtube.com/embed/${videoId}`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beleggingsapp</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h2>Beleggingsapp</h2>
+    <div id="stocks"></div>
+    
+    <h3>Koop Aandelen</h3>
+    <select id="stock">
+        <option value="ASML">ASML Holding</option>
+        <option value="Shell">Shell</option>
+        <option value="Unilever">Unilever</option>
+        <option value="Philips">Philips</option>
+        <!-- Voeg meer aandelen toe indien nodig -->
+    </select>
+    <input type="number" id="amount" placeholder="Aantal">
+    <button onclick="buyStock()">Kopen</button>
+    
+    <h3>Verkoop Aandelen</h3>
+    <input type="number" id="sellAmount" placeholder="Aantal">
+    <button onclick="sellStock()">Verkopen</button>
+    
+    <h3>Koersgrafiek</h3>
+    <canvas id="stockChart"></canvas>
+    
+    <script>
+        let stocks = {};
+        let stockHistory = {};
+        let chart;
+
+        function updateStocks(data) {
+            stocks = data.stocks;
+            stockHistory = data.history;
+            let stockDiv = document.getElementById("stocks");
+            stockDiv.innerHTML = "";
+            
+            for (let stock in stocks) {
+                let change = stocks[stock].change >= 0 ? "🟢" : "🔴";
+                stockDiv.innerHTML += `<p>${stock}: €${stocks[stock].price} (${change} ${stocks[stock].change}%)</p>`;
+            }
+
+            updateChart();
+        }
+
+        function updateChart() {
+            let ctx = document.getElementById("stockChart").getContext("2d");
+            let labels = Object.keys(stockHistory).map(t => new Date(t * 1000).toLocaleTimeString());
+            let prices = Object.values(stockHistory).map(d => d.price);
+
+            if (chart) {
+                chart.destroy();
+            }
+
+            chart = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Aandelenkoers",
+                        data: prices,
+                        borderColor: "blue",
+                        fill: false
+                    }]
+                }
+            });
+        }
+
+        function buyStock() {
+            let stock = document.getElementById("stock").value;
+            let amount = document.getElementById("amount").value;
+            fetchNUI("buyStock", { stock: stock, amount: amount });
+        }
+
+        function sellStock() {
+            let stock = document.getElementById("stock").value;
+            let amount = document.getElementById("sellAmount").value;
+            fetchNUI("sellStock", { stock: stock, amount: amount });
+        }
+    </script>
+</body>
+</html>

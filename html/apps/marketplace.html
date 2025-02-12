@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketplace</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="marketplace-app">
+        <h2>Marketplace</h2>
+        <div id="listings"></div>
+
+        <h3>Voertuig te koop zetten</h3>
+        <input type="text" id="plate" placeholder="Kenteken">
+        <input type="number" id="price" placeholder="Prijs">
+        <button onclick="placeListing()">Plaatsen</button>
+
+        <h3>Auto kopen</h3>
+        <input type="number" id="listingId" placeholder="Advertentie-ID">
+        <input type="text" id="garage" placeholder="Garage">
+        <button onclick="buyVehicle()">Kopen</button>
+    </div>
+
+    <script>
+        function updateListings(listings) {
+            let listingsDiv = document.getElementById("listings");
+            listingsDiv.innerHTML = "";
+            
+            listings.forEach(listing => {
+                listingsDiv.innerHTML += `<p>ID: ${listing.id} - Kenteken: ${listing.plate} - Prijs: €${listing.price}</p>`;
+            });
+        }
+
+        function placeListing() {
+            let plate = document.getElementById("plate").value;
+            let price = document.getElementById("price").value;
+
+            if (!plate || !price) {
+                alert("Vul een geldig kenteken en prijs in!");
+                return;
+            }
+
+            fetchNUI("placeListing", { plate: plate, price: price })
+                .then(() => alert("Advertentie geplaatst!"))
+                .catch(() => alert("Fout bij plaatsen!"));
+        }
+
+        function buyVehicle() {
+            let listingId = document.getElementById("listingId").value;
+            let garage = document.getElementById("garage").value;
+
+            if (!listingId || !garage) {
+                alert("Vul een geldig ID en garage in!");
+                return;
+            }
+
+            fetchNUI("buyVehicle", { listingId: listingId, garage: garage })
+                .then(() => alert("Voertuig gekocht!"))
+                .catch(() => alert("Fout bij kopen!"));
+        }
+    </script>
+</body>
+</html>

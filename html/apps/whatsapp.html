@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="whatsapp-app">
+        <h2>WhatsApp</h2>
+        <div id="chats"></div>
+
+        <input type="text" id="targetId" placeholder="ID van speler">
+        <input type="text" id="message" placeholder="Bericht">
+        <button onclick="sendMessage()">Verstuur</button>
+
+        <h3>Afbeelding verzenden</h3>
+        <input type="text" id="imageUrl" placeholder="Afbeeldingslink">
+        <button onclick="sendImage()">Verstuur afbeelding</button>
+    </div>
+
+    <script>
+        function updateChatList(chats) {
+            let chatsDiv = document.getElementById("chats");
+            chatsDiv.innerHTML = "";
+            
+            chats.forEach(chat => {
+                let content = chat.type === "image" ? `<img src="${chat.message}" width="100">` : chat.message;
+                chatsDiv.innerHTML += `<p>${chat.timestamp} - ${chat.sender}: ${content}</p>`;
+            });
+        }
+
+        function sendMessage() {
+            let targetId = document.getElementById("targetId").value;
+            let message = document.getElementById("message").value;
+
+            if (!targetId || !message) {
+                alert("Vul een geldig ID en bericht in!");
+                return;
+            }
+
+            fetchNUI("sendMessage", { target: targetId, message: message })
+                .then(() => alert("Bericht verzonden!"))
+                .catch(() => alert("Fout bij verzenden!"));
+        }
+
+        function sendImage() {
+            let targetId = document.getElementById("targetId").value;
+            let image = document.getElementById("imageUrl").value;
+
+            if (!targetId || !image) {
+                alert("Vul een geldig ID en afbeeldingslink in!");
+                return;
+            }
+
+            fetchNUI("sendImage", { target: targetId, image: image })
+                .then(() => alert("Afbeelding verzonden!"))
+                .catch(() => alert("Fout bij verzenden!"));
+        }
+    </script>
+</body>
+</html>

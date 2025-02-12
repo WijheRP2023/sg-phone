@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="banking-app">
+        <h2>Jouw Saldo</h2>
+        <p id="balance">€0</p>
+
+        <h3>Geld Overmaken</h3>
+        <input type="text" id="targetId" placeholder="ID van speler">
+        <input type="number" id="amount" placeholder="Bedrag">
+        <button onclick="transferMoney()">Overmaken</button>
+
+        <h3>Transacties</h3>
+        <div id="transactions"></div>
+    </div>
+
+    <script>
+        function updateBankingData(data) {
+            document.getElementById("balance").innerText = "€" + data.balance;
+            let transactionsDiv = document.getElementById("transactions");
+            transactionsDiv.innerHTML = "";
+
+            data.transactions.forEach(tr => {
+                let type = tr.amount > 0 ? "In" : "Uit";
+                let amount = tr.amount > 0 ? "+€" + tr.amount : "-€" + Math.abs(tr.amount);
+                transactionsDiv.innerHTML += `<p>${tr.date} - ${type}: ${amount}</p>`;
+            });
+        }
+
+        function transferMoney() {
+            let targetId = document.getElementById("targetId").value;
+            let amount = document.getElementById("amount").value;
+
+            if (!targetId || !amount) {
+                alert("Vul een geldig ID en bedrag in!");
+                return;
+            }
+
+            fetchNUI("transferMoney", { target: targetId, amount: amount })
+                .then(() => alert("Geld overgemaakt!"))
+                .catch(() => alert("Fout bij overmaken!"));
+        }
+    </script>
+</body>
+</html>

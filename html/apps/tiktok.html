@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="tiktok-app">
+        <h2>TikTok</h2>
+        <div id="video-list"></div>
+
+        <h3>Upload een video</h3>
+        <input type="text" id="videoUrl" placeholder="Video URL">
+        <input type="text" id="description" placeholder="Beschrijving">
+        <label>
+            <input type="checkbox" id="shareOnDiscord"> Deel op Discord 📢
+        </label>
+        <button onclick="uploadTikTokVideo()">Uploaden</button>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", fetchVideos);
+
+        function fetchVideos() {
+            fetchNUI("getTikTokVideos").then(videos => {
+                const videoList = document.getElementById("video-list");
+                videoList.innerHTML = "";
+
+                videos.forEach(video => {
+                    let videoElement = document.createElement("div");
+                    videoElement.classList.add("video-item");
+                    videoElement.innerHTML = `
+                        <iframe width="300" height="500" src="${video.videoUrl}" frameborder="0" allowfullscreen></iframe>
+                        <p>${video.description}</p>
+                    `;
+                    videoList.appendChild(videoElement);
+                });
+            }).catch(() => {
+                alert("Fout bij ophalen van video's!");
+            });
+        }
+
+        function uploadTikTokVideo() {
+            let videoUrl = document.getElementById("videoUrl").value;
+            let description = document.getElementById("description").value;
+            let shareOnDiscord = document.getElementById("shareOnDiscord").checked;
+
+            if (!videoUrl || !description) {
+                alert("Vul alle velden in!");
+                return;
+            }
+
+            fetchNUI("uploadTikTokVideo", { videoUrl, description, shareOnDiscord })
+                .then(() => {
+                    alert("Video geüpload!");
+                    fetchVideos(); // Vernieuw de lijst
+                })
+                .catch(() => alert("Fout bij uploaden!"));
+        }
+    </script>
+</body>
+</html>

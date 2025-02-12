@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Darkweb</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="darkweb-app">
+        <h2>Darkweb</h2>
+        <div id="listings"></div>
+
+        <h3>Plaats een item</h3>
+        <input type="text" id="item" placeholder="Item">
+        <input type="number" id="amount" placeholder="Aantal">
+        <input type="number" id="price" placeholder="Prijs (zwart geld)">
+        <button onclick="placeDarkwebListing()">Plaatsen</button>
+
+        <h3>Koop een item</h3>
+        <input type="number" id="listingId" placeholder="Advertentie-ID">
+        <button onclick="buyDarkwebItem()">Kopen</button>
+    </div>
+
+    <script>
+        function updateListings(listings) {
+            let listingsDiv = document.getElementById("listings");
+            listingsDiv.innerHTML = "";
+            
+            listings.forEach(listing => {
+                listingsDiv.innerHTML += `<p>ID: ${listing.id} - Item: ${listing.item} - Prijs: €${listing.price} - Aantal: ${listing.amount}</p>`;
+            });
+        }
+
+        function placeDarkwebListing() {
+            let item = document.getElementById("item").value;
+            let amount = document.getElementById("amount").value;
+            let price = document.getElementById("price").value;
+
+            if (!item || !amount || !price) {
+                alert("Vul geldige waarden in!");
+                return;
+            }
+
+            fetchNUI("placeDarkwebListing", { item: item, amount: amount, price: price })
+                .then(() => alert("Advertentie geplaatst!"))
+                .catch(() => alert("Fout bij plaatsen!"));
+        }
+
+        function buyDarkwebItem() {
+            let listingId = document.getElementById("listingId").value;
+
+            if (!listingId) {
+                alert("Vul een geldig ID in!");
+                return;
+            }
+
+            fetchNUI("buyDarkwebItem", { listingId: listingId })
+                .then(() => alert("Item gekocht!"))
+                .catch(() => alert("Fout bij kopen!"));
+        }
+    </script>
+</body>
+</html>
